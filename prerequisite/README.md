@@ -12,3 +12,5 @@ Also, the “graphviz” python package is handy to investigate what is going on
 
 https://graphviz.readthedocs.io/en/stable/manual.html#installation
 
+>> conda install graphviz
+
