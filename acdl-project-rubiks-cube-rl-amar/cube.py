@@ -32,6 +32,25 @@ class Cube:
             self.__faces__ = [self.front(), self.back(), self.left(), self.right(), self.up(), self.down()]
             return
 
+        # create array of values 1-6 for different colors
+        # and multiply by number of pieces per size to get
+        # equal amount of each color (white. black, red, orange, green, yellow)
+        '''nums = ['W','B','R','O','G','Y']*(size**2)
+        # shuffle numbers
+        shuffle(nums)
+        front, nums = nums[0:size**2],nums[size**2:]
+        self.__front__ = [front[i:i + size] for i in range(0,len(front), size)]
+        back, nums = nums[0:size**2],nums[size**2:]
+        self.__back__ = [back[i:i + size] for i in range(0,len(front), size)]
+        left, nums = nums[0:size**2],nums[size**2:]
+        self.__left__ = [left[i:i + size] for i in range(0,len(front), size)]
+        right, nums = nums[0:size**2],nums[size**2:]
+        self.__right__ = [right[i:i + size] for i in range(0,len(front), size)]
+        top, nums = nums[0:size**2],nums[size**2:]
+        self.__top__ = [top[i:i + size] for i in range(0,len(front), size)]
+        bottom, nums = nums[0:size**2],nums[size**2:]
+        self.__bottom__ = [bottom[i:i + size] for i in range(0,len(front), size)]'''
+
         self.__front__ = [['W', 'W', 'W'], ['W', 'W', 'W'], ['W', 'W', 'W']]
         self.__back__ = [['Y', 'Y', 'Y'], ['Y', 'Y', 'Y'], ['Y', 'Y', 'Y']]
 
@@ -302,36 +321,36 @@ class Cube:
     def front(self):
         return self.__front__
 
-    def set_front(self, front: str):
+    def set_front(self, front: List[List[str]]):
         self.__front__ = front
 
     def back(self):
         return self.__back__
 
-    def set_back(self, back: str):
+    def set_back(self, back: List[List[str]]):
         self.__back__ = back
 
     def left(self):
         return self.__left__
 
-    def set_left(self, left: str):
+    def set_left(self, left: List[List[str]]):
         self.__left__ = left
 
     def right(self):
         return self.__right__
 
-    def set_right(self, right: str):
+    def set_right(self, right: List[List[str]]):
         self.__right__ = right
 
     def up(self):
         return self.__up__
 
-    def set_up(self, up: str):
+    def set_up(self, up: List[List[str]]):
         self.__up__ = up
 
     def down(self):
         return self.__down__
 
-    def set_down(self, down: str):
+    def set_down(self, down: List[List[str]]):
         self.__down__ = down
     # ******************************************************************************************************************
