@@ -48,11 +48,11 @@ class Agent:
 
         # Maintain visited list, visited count, and number of revisits.
         self.visited = []
-        self.visit_count = {}
+        self.visit_counter = {}
         self.num_of_revisits = 0
 
         # Initialize all the moves to zero, 0.
-        self.move = {"front": 0, "back": 0, "left": 0, "right": 0, "up": 0, "down": 0}
+        self.possible_moves = {"front": 0, "back": 0, "left": 0, "right": 0, "up": 0, "down": 0}
 
         # Pattern lists for associating the weights with the nodes
         # that are closer to the goal state.
@@ -82,10 +82,10 @@ class Agent:
         print("Number of non-zero Q values are : " + str(x))
         print("Number of revisited states are : " + str(self.num_of_revisits))
 
-        print(self.move)
+        print(self.possible_moves)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def max_reward_from_current_state(self, cube: Cube, action) -> float:
+    def max_reward_after_action(self, cube: Cube, action) -> float:
         """
         Compute the maximum reward that the current state of the cube can get for any possible next single move.
         :param cube: The Cube.
@@ -93,18 +93,18 @@ class Agent:
         ['front', 'back', 'left', 'right', 'up', 'down']
         :return: The maximum reward possible from the current state for the next posible move.
         """
-        next_cube_state = utils.move(cube, action)
+        next_cube_state = utils.perform_move(cube, action)
 
         if not next_cube_state in self.rewards.keys():
             self.rewards[next_cube_state] = []
 
             for action in self.actions:
-                self.rewards[next_cube_state].append(self.compute_rewards(next_cube_state, action))
+                self.rewards[next_cube_state].append(self.get_reward(next_cube_state, action))
 
         return max(self.rewards[next_cube_state])
 
     # ------------------------------------------------------------------------------------------------------------------
-    def compute_rewards(self, cube: Cube, action) -> float:
+    def get_reward(self, cube: Cube, action) -> float:
         """
         The reward function for this Agent.
 
@@ -117,7 +117,7 @@ class Agent:
         # then the solved sides feature is 1, else 0
         """
 
-        next_cube_state = utils.move(cube, action)
+        next_cube_state = utils.perform_move(cube, action)
 
         if next_cube_state.is_goal_state_reached():
             print(cube)
@@ -150,7 +150,7 @@ class Agent:
 
         # get list of goal successors
         for action in self.actions:
-            next_cube_state = utils.move(cube, action)
+            next_cube_state = utils.perform_move(cube, action)
             self.moves_away_1.append(next_cube_state)
             # Creating the QValues for the first move
             for temp_action in self.actions:
@@ -159,7 +159,7 @@ class Agent:
         # get list of successors of goal successors
         for cube in self.moves_away_1:
             for action in self.actions:
-                next_cube_state = utils.move(cube, action)
+                next_cube_state = utils.perform_move(cube, action)
                 self.moves_away_2.append(next_cube_state)
                 for temp_action in self.actions:
                     self.QV[(next_cube_state.__hash__(), temp_action)] = -6 if temp_action != action else 6
@@ -167,7 +167,7 @@ class Agent:
         # get list of successors-successors of goal successors
         for cube in self.moves_away_2:
             for action in self.actions:
-                next_cube_state = utils.move(cube, action)
+                next_cube_state = utils.perform_move(cube, action)
                 self.moves_away_3.append(next_cube_state)
                 for temp_action in self.actions:
                     self.QV[(next_cube_state.__hash__(), temp_action)] = -5 if temp_action != action else 5
@@ -175,7 +175,7 @@ class Agent:
         # get list of successors-successors-successors of goal successors
         for cube in self.moves_away_3:
             for action in self.actions:
-                next_cube_state = utils.move(cube, action)
+                next_cube_state = utils.perform_move(cube, action)
                 self.moves_away_4.append(next_cube_state)
                 for temp_action in self.actions:
                     self.QV[(next_cube_state.__hash__(), temp_action)] = -4 if temp_action != action else 4
@@ -183,7 +183,7 @@ class Agent:
         # get list of successors-successors-successors-successors of goal successors
         for cube in self.moves_away_4:
             for action in self.actions:
-                next_cube_state = utils.move(cube, action)
+                next_cube_state = utils.perform_move(cube, action)
                 self.moves_away_5.append(next_cube_state)
                 for temp_action in self.actions:
                     self.QV[(next_cube_state.__hash__(), temp_action)] = -3 if temp_action != action else 3
@@ -191,7 +191,7 @@ class Agent:
         # get list of successors-successors-successors-successors-successors of goal successors
         for cube in self.moves_away_5:
             for action in self.actions:
-                next_cube_state = utils.move(cube, action)
+                next_cube_state = utils.perform_move(cube, action)
                 self.moves_away_6.append(next_cube_state)
                 for temp_action in self.actions:
                     self.QV[(next_cube_state.__hash__(), temp_action)] = -1 if temp_action != action else 1

@@ -1,3 +1,8 @@
+# https://en.wikipedia.org/wiki/Q-learning
+
+# The core of Q-Value algorithm is the Bellman Equation as a value iteration update, using the weighted average of
+# old value and the new information.
+
 from typing import Any
 from typing import List
 from typing import Tuple
@@ -11,14 +16,14 @@ import random
 
 from agent import Agent
 
-__ALPHA = .6  # .6
+__ALPHA = .4  # .6
 
 
 # explore
-def perform_Q_learning(agent: Agent, discount: float = 0.99, episodes : int = 10, epsilon : float = 0.9) -> None:
+def QLearning(agent: Agent, discount: float = 0.99, episodes: int = 10, epsilon: float = 0.9) -> None:
     """
     This is known as exploration phase. Perform Q-Learning for a given number of episodes
-    :param agent:
+    :param agent: The agent.
     :param discount: The discount factor, range is (0,1].
     :param episodes: The number of episodes need to be performed.
     :param epsilon: The value of epsilon.
@@ -29,72 +34,98 @@ def perform_Q_learning(agent: Agent, discount: float = 0.99, episodes : int = 10
     print(agent.current_state)  # six_move_state()
 
     for i in range(episodes):
+
         print("\n====== EPISODE " + str(i) + " ======")
-        print("==== CURR STATE ========")
+        print("==== CURRENT STATE ========")
         print("========================\n")
+
         # initialize values in Q-State dictionary for
         # any state action pairs including current state
         # that are null
         saved_rewards = agent.current_state.__hash__() in agent.rewards.keys()
+
+        # check if there are no saved rewards, if so then save an empty list for the current state of the cube.
         if not saved_rewards:
             agent.rewards[agent.current_state.__hash__()] = []
-        if not agent.current_state.__hash__ in agent.visit_count:
-            agent.visit_count[agent.current_state.__hash__()] = 1
+
+        # check if the current state is logged in visit_counter,
+        # if not then update the visit counter by 1 for the current state, else increment the counter by 1.
+        if not agent.current_state.__hash__ in agent.visit_counter:
+            agent.visit_counter[agent.current_state.__hash__()] = 1
         else:
-            agent.visit_count[agent.current_state.__hash__()] += 1
-        vc = agent.visit_count[agent.current_state.__hash__()]
-        # initialize Q-Values of 0 for all state action pairs
-        # for the given, state, if they do not exist
+            agent.visit_counter[agent.current_state.__hash__()] += 1
+
+        visit_count = agent.visit_counter[agent.current_state.__hash__()]
+
+        # Initialize Q-Values of 0, for all state action pairs, for the given state if they do not exist. Additionally,
+        # check if the saved_rewards is still False, if so then compute the rewards for the given action action and
+        # append it to the agent's rewards.
+        # If they exist, increment the number of revisits by 1 and break!
         for action in agent.actions:
             if not (agent.current_state.__hash__(), action) in agent.QV.keys():
                 agent.QV[(agent.current_state.__hash__(), action)] = 0
             else:
                 agent.num_of_revisits += 1
                 break
+
+            # After initializing the Q-Value as 0, check if there are saved rewards if not then compute the rewards for
+            # the current action and append it to the agents rewards.
             if not saved_rewards:
-                agent.rewards[agent.current_state.__hash__()].append(agent.compute_rewards(agent.current_state, action))
+                agent.rewards[agent.current_state.__hash__()].append(agent.get_reward(agent.current_state, action))
+
+        # Check if agent has already reached the goal state!
         if 100 in agent.rewards[agent.current_state.__hash__()]:
             print("REACHED GOAL, END Q-LEARN ITERATION")
             return
+
+        # Initialize a random policy value between 0 and 1.
         follow_policy = random.uniform(0, 1.0)
-        print("Random value generated is " + str(follow_policy))
-        # if random number is > epsilon, we must select best move
-        # by the highest q-value
+        print("Random follow_policy value generated is " + str(follow_policy))
+
+        # If the random follow_policy number is > epsilon value, we must select best move by the highest Q-Value
         if follow_policy > epsilon:
-            print("\nFOLLOWING POLICY")
+            print("\n\nFOLLOWING  RANDOM POLICY")
+
             for action in agent.actions:
-                print("\tq value for action " + action + "\tfrom curr state is \t" + str(
-                    agent.QV[(agent.current_state.__hash__(), action)]))
+                print("\tQ-Value for action " + action + "\tfrom current state is \t" + str(
+                    agent.QV[(agent.current_state.__hash__(), action)]), '\n')
+
+            # Assume there is no best action yet and assign best Q-Value as -10000000.
             best_action = None
             best_QV = -100000000
+
+            # check if the agents current state Q-Value is greater than the present best value,
+            # and the current action is not the last action also the current action is not the second last action.
+            # If the above conditions are met then we have got our new best action and best Q-Value.
+            # this will be repeated for all the possible actions defined for the puzzle.
             for action in agent.actions:
-                if agent.QV[(agent.current_state.__hash__(),
-                             action)] > best_QV and action != agent.last_action and action != agent.second_last_action:
+                if (agent.QV[(agent.current_state.__hash__(), action)] > best_QV) \
+                        and (action != agent.last_action) \
+                        and (action != agent.second_last_action):
+
                     best_action = action
                     best_QV = agent.QV[(agent.current_state.__hash__(), action)]
+
+            # It may happen that best Q-Value is 0, then chose the best action at random
             if best_QV == 0:
                 best_action = random.choice(agent.actions)
+
+                # caution if the best action, when Q-Value is 0, is also the action that was taken in the last move
+                # then randomly chose another action other than the last action.
                 while best_action == agent.last_action:
                     best_action = random.choice(agent.actions)
-            print("\n\t Actions chosen = " + best_action)
-            agent.move[best_action] = agent.move[best_action] + 1
-            # update Q-Value for current state and action chosen based on the current policy, by taking original Q-value, and adding
-            # alpha times the reward value of the new state plus the discounted max_reward of executing every possible
-            # action on the new state, minus the original Q-Value
-            # reward = agent.reward(agent.current_state, best_action)
-            # max_reward = agent.max_reward(agent.current_state, best_action)
-            # agent.QV[(agent.current_state.__hash__(), best_action)] = best_QV + ALPHA*(reward +\
-            #                                         discount*max_reward - best_QV)
 
-            for action in agent.actions:
-                curr_QV = agent.QV[(agent.current_state.__hash__(), action)]
-                reward = agent.compute_rewards(agent.current_state, action)
-                max_reward = agent.max_reward_from_current_state(agent.current_state, action)
+            print("\n\t The Best current best action chosen : " + best_action)
 
-                agent.QV[(agent.current_state.__hash__(), action)] = \
-                    curr_QV + __ALPHA * (reward + (discount ** vc) * max_reward - curr_QV)
+            # Increment the Agent`s possible_moves dictionary's with the chosen action by 1
+            agent.possible_moves[best_action] = agent.possible_moves[best_action] + 1
 
-            print("\n\t new q value for " + best_action + " action is " + str(
+            # *********************************************************************************************************
+            # *********** Update the Agent's Q-Value table ************************************************************
+            # *********************************************************************************************************
+            update_agent_QValue_table(agent, discount, visit_count)
+
+            print("\n\t The new Q-Value for \"" + best_action + "\" action is : " + str(
                 agent.QV[(agent.current_state.__hash__(), best_action)]))
 
             agent.current_state.move(best_action)
@@ -105,41 +136,61 @@ def perform_Q_learning(agent: Agent, discount: float = 0.99, episodes : int = 10
                 # time.sleep(2)
                 return
 
+            print("..... agent's last action ..... : ", agent.last_action)
             agent.second_last_action = agent.last_action
             agent.last_action = best_action
 
+        # When the generated random policy number is not greater than the Q-Value
         else:
-            # pick random move
+            # pick a random move
             action = random.choice(agent.actions)
-            agent.move[action] = agent.move[action] + 1
-            while action == agent.last_action or action == agent.second_last_action:
+            agent.possible_moves[action] = agent.possible_moves[action] + 1
+
+            # The random chosen action must not be the among the last two actions already performed.
+            while (action == agent.last_action) \
+                    or (action == agent.second_last_action):
                 action = random.choice(agent.actions)
 
-            # update Q-Value for current state and randomly chosen action, by taking original Q-value, and adding
-            # alpha times the reward value of the new state plus the discounted max_reward of executing every possible
-            # action on the new state, minus the original Q-Value
-            # reward = agent.reward(agent.current_state, action)
-            # max_reward = agent.max_reward(agent.current_state, action)
-            # print("max reward... " + str(max_reward))
-            # print("reward... " + str(reward))
-            # agent.QV[(agent.current_state.__hash__(), action)] = curr_QV + ALPHA*(reward +\
-            # discount*max_reward - curr_QV)
-            reward = 0
+            # *********************************************************************************************************
+            # *********** Update the Agent's Q-Value table ************************************************************
+            # *********************************************************************************************************
+            update_agent_QValue_table(agent, discount, visit_count)
 
-            for action in agent.actions:
-                curr_QV = agent.QV[(agent.current_state.__hash__(), action)]
-                reward = agent.compute_rewards(agent.current_state, action)
-                max_reward = agent.max_reward_from_current_state(agent.current_state, action)
-                agent.QV[(agent.current_state.__hash__(), action)] = \
-                    curr_QV + __ALPHA * (reward + (discount ** vc) * max_reward - curr_QV)
-
-            # print(agent.reward(agent.current_state,action))
-            # print(agent.QV[(agent.current_state,action)])
             agent.current_state.move(action)
             agent.current_state = agent.current_state.copy()
+
             agent.second_last_action = agent.last_action
             agent.last_action = action
+
             if agent.current_state.is_goal_state_reached():
                 print("Reached goal state while in Q-learning episode : " + str(i))
                 # time.sleep(2)
                 return
+
+
+def update_agent_QValue_table(agent, discount, visit_count):
+    """
+    Update Q-Value for current state and randomly chosen action, by taking original Q-value, and adding
+    alpha times the reward value of the new state plus the discounted max_reward of executing every possible
+    action on the new state, minus the original Q-Value
+
+    reward = agent.reward(agent.current_state, action)
+    max_reward = agent.max_reward(agent.current_state, action)
+    agent.QV[(agent.current_state.__hash__(), action)] = curr_QV + ALPHA * (reward + (discount * max_reward) - curr_QV)
+
+    :param agent:
+    :param discount:
+    :param visit_count:
+    :return:
+    """
+    reward = 0
+
+    for action in agent.actions:
+        current_QV = agent.QV[(agent.current_state.__hash__(), action)]
+        reward = agent.get_reward(agent.current_state, action)
+        max_reward = agent.max_reward_after_action(agent.current_state, action)
+
+        # ************ Calculation of a new Q-Value ***********************************************************
+        # https://en.wikipedia.org/wiki/Q-learning
+        agent.QV[(agent.current_state.__hash__(), action)] = \
+            current_QV + __ALPHA * (reward + (discount ** visit_count) * max_reward - current_QV)

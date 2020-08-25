@@ -45,11 +45,11 @@ def random_move(cube: Cube) -> Cube:
     action = random.choice(cube.actions)
 
     print("executing " + action + "\t180 rotation")
-    cube = move(cube, action)
+    cube = perform_move(cube, action)
     return cube
 
 
-def move(cube, action):
+def perform_move(cube, action):
     #print("in util.move() : ", cube)
     new_state = cube.copy()
 

@@ -10,7 +10,7 @@ from typing import NoReturn
 import time, copy, random
 
 from agent import Agent
-from q_learning_impl import perform_Q_learning
+from q_learning_impl import QLearning
 
 
 class Play:
@@ -31,7 +31,7 @@ class Play:
             for j, e in enumerate(epsilons):
                 print("\n\n************************************** ROUND " + str(
                     j) + " ***********************************")
-                perform_Q_learning(agent, epsilon=e)
+                QLearning(agent, epsilon=e)
 
         print("\n*** there are " + str(len(agent.QV)) + " keys in Q Table", '\n')
 

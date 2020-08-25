@@ -14,7 +14,7 @@ def makeNearGoal():
     print("Initial state of the cube : ", solved_cube)
 
     for action in cube.actions:
-        solved_cube = utils.move(cube, action)
+        solved_cube = utils.perform_move(cube, action)
         print(action)
         if solved_cube.is_goal_state_reached():
             print("executing the " + action + " action resulted in the below goal state " + str(solved_cube))
