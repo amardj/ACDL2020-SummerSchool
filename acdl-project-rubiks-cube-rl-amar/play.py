@@ -18,19 +18,18 @@ class Play:
     def __init__(self):
         agent = Agent()
 
-        print('\n', "Performing the registration of patter database, please wait for a while ............ \n")
-        agent.register_patterns()
+        print('\n', "Performing the registration of patter database up to n moves, please wait for a while ........ \n")
+        agent.register_pattern_upto_n_moves(7)
 
         print("\n Printing the QValues : ")
-        print("\n\t", agent.QV)
+        #print("\n\t", agent.QV)
 
         epsilons = [i / 50 for i in range(50)]
         epsilons.reverse()
 
         for i in range(2):
             for j, e in enumerate(epsilons):
-                print("\n\n************************************** ROUND " + str(
-                    j) + " ***********************************")
+                print("\n\n************************************ ROUND " + str(j) + " *********************************")
                 QLearning(agent, epsilon=e)
 
         print("\n*** there are " + str(len(agent.QV)) + " keys in Q Table", '\n')

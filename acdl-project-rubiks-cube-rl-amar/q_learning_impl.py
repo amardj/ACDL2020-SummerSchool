@@ -71,7 +71,7 @@ def QLearning(agent: Agent, discount: float = 0.99, episodes: int = 10, epsilon:
             # After initializing the Q-Value as 0, check if there are saved rewards if not then compute the rewards for
             # the current action and append it to the agents rewards.
             if not saved_rewards:
-                agent.rewards[agent.current_state.__hash__()].append(agent.get_reward(agent.current_state, action))
+                agent.rewards[agent.current_state.__hash__()].append(agent.reward_for_action(agent.current_state, action))
 
         # Check if agent has already reached the goal state!
         if 100 in agent.rewards[agent.current_state.__hash__()]:
@@ -187,8 +187,8 @@ def update_agent_QValue_table(agent, discount, visit_count):
 
     for action in agent.actions:
         current_QV = agent.QV[(agent.current_state.__hash__(), action)]
-        reward = agent.get_reward(agent.current_state, action)
-        max_reward = agent.max_reward_after_action(agent.current_state, action)
+        reward = agent.reward_for_action(agent.current_state, action)
+        max_reward = agent.max_reward_for_action(agent.current_state, action)
 
         # ************ Calculation of a new Q-Value ***********************************************************
         # https://en.wikipedia.org/wiki/Q-learning

@@ -131,6 +131,7 @@ class Cube:
         ['front', 'back', 'left', 'right', 'up', 'down']
         :return: self
         """
+
         if action == 'left':
             self.turn_left()
         elif action == 'right':

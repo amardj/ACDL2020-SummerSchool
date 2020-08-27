@@ -56,6 +56,9 @@ class Agent:
 
         # Pattern lists for associating the weights with the nodes
         # that are closer to the goal state.
+
+        self.moves_away_from_goal = []
+
         self.moves_away_1 = []
         self.moves_away_2 = []
         self.moves_away_3 = []
@@ -85,7 +88,7 @@ class Agent:
         print(self.possible_moves)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def max_reward_after_action(self, cube: Cube, action) -> float:
+    def max_reward_for_action(self, cube: Cube, action) -> float:
         """
         Compute the maximum reward that the current state of the cube can get for any possible next single move.
         :param cube: The Cube.
@@ -93,18 +96,18 @@ class Agent:
         ['front', 'back', 'left', 'right', 'up', 'down']
         :return: The maximum reward possible from the current state for the next posible move.
         """
-        next_cube_state = utils.perform_move(cube, action)
+        next_cube_state = utils.perform_action(cube, action)
 
         if not next_cube_state in self.rewards.keys():
             self.rewards[next_cube_state] = []
 
             for action in self.actions:
-                self.rewards[next_cube_state].append(self.get_reward(next_cube_state, action))
+                self.rewards[next_cube_state].append(self.reward_for_action(next_cube_state, action))
 
         return max(self.rewards[next_cube_state])
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_reward(self, cube: Cube, action) -> float:
+    def reward_for_action(self, cube: Cube, action) -> float:
         """
         The reward function for this Agent.
 
@@ -117,7 +120,7 @@ class Agent:
         # then the solved sides feature is 1, else 0
         """
 
-        next_cube_state = utils.perform_move(cube, action)
+        next_cube_state = utils.perform_action(cube, action)
 
         if next_cube_state.is_goal_state_reached():
             print(cube)
@@ -140,61 +143,42 @@ class Agent:
         return reward
 
     # ------------------------------------------------------------------------------------------------------------------
-    def register_patterns(self):
+    def register_pattern_upto_n_moves(self, move_limit: int = 5):
+        """
+        This function registers patterns for the cube state such as 1 move away from goal state, 2 moves away from
+        the goal state, ... , and n moves away from the goal state.
+        :param move_limit:  Number of moves upto which you want to register the patterns. Default value is 5.
+        :return: None
         """
 
-        :return:
-        """
+        # Initialize the moves_away_list by a list of Nones up to the value of move_limit elements
+        self.moves_away_from_goal = [[] for _ in range(move_limit + 1)]
 
-        cube = Cube()
+        # Initialize the with the goal state, ie. the new cube is in the goal state.
+        _0th_cube_state = Cube()
+        self.moves_away_from_goal[0].append(_0th_cube_state)
 
-        # get list of goal successors
-        for action in self.actions:
-            next_cube_state = utils.perform_move(cube, action)
-            self.moves_away_1.append(next_cube_state)
-            # Creating the QValues for the first move
-            for temp_action in self.actions:
-                self.QV[(next_cube_state.__hash__(), temp_action)] = -10 if temp_action != action else 10
+        i = 0
+        for i in range(1, move_limit+1, 1):
+            print('\n moves_away_list_size[', i - 1, '] : ', len(self.moves_away_from_goal[i - 1]))
 
-        # get list of successors of goal successors
-        for cube in self.moves_away_1:
-            for action in self.actions:
-                next_cube_state = utils.perform_move(cube, action)
-                self.moves_away_2.append(next_cube_state)
-                for temp_action in self.actions:
-                    self.QV[(next_cube_state.__hash__(), temp_action)] = -6 if temp_action != action else 6
+            for previous_state in self.moves_away_from_goal[i - 1]:
 
-        # get list of successors-successors of goal successors
-        for cube in self.moves_away_2:
-            for action in self.actions:
-                next_cube_state = utils.perform_move(cube, action)
-                self.moves_away_3.append(next_cube_state)
-                for temp_action in self.actions:
-                    self.QV[(next_cube_state.__hash__(), temp_action)] = -5 if temp_action != action else 5
+                for action in self.actions:
+                    ith_cube_state = utils.perform_action(previous_state, action)
+                    self.moves_away_from_goal[i].append(ith_cube_state)
 
-        # get list of successors-successors-successors of goal successors
-        for cube in self.moves_away_3:
-            for action in self.actions:
-                next_cube_state = utils.perform_move(cube, action)
-                self.moves_away_4.append(next_cube_state)
-                for temp_action in self.actions:
-                    self.QV[(next_cube_state.__hash__(), temp_action)] = -4 if temp_action != action else 4
+                    best_ith_QV = (move_limit - i + 1)**2
+                    worst_ith_QV = -best_ith_QV
 
-        # get list of successors-successors-successors-successors of goal successors
-        for cube in self.moves_away_4:
-            for action in self.actions:
-                next_cube_state = utils.perform_move(cube, action)
-                self.moves_away_5.append(next_cube_state)
-                for temp_action in self.actions:
-                    self.QV[(next_cube_state.__hash__(), temp_action)] = -3 if temp_action != action else 3
+                    # Creating the QValues for the second move
+                    for temp_action in self.actions:
+                        self.QV[(ith_cube_state.__hash__(), temp_action)] \
+                            = best_ith_QV if temp_action == action else worst_ith_QV
 
-        # get list of successors-successors-successors-successors-successors of goal successors
-        for cube in self.moves_away_5:
-            for action in self.actions:
-                next_cube_state = utils.perform_move(cube, action)
-                self.moves_away_6.append(next_cube_state)
-                for temp_action in self.actions:
-                    self.QV[(next_cube_state.__hash__(), temp_action)] = -1 if temp_action != action else 1
+        print('\n moves_away_list_size[', i - 1, '] : ', len(self.moves_away_from_goal[i]))
+
+        return None
 
     # ------------------------------------------------------------------------------------------------------------------
     def start(self):
@@ -262,3 +246,82 @@ class Agent:
 
                 return
 
+    # ------------------------------------------------------------------------------------------------------------------
+    #def register_patterns_old(self):
+    #    """
+    #    This function registers patterns for the cube state such as 1 move away from goal state, 2 moves away from
+    #    the goal state, ... , and 6 moves away from the goal state.
+    #    :return: None
+    #    """
+    #
+    #    print('\n In the register_patterns_old ?????????????.........?????????\n')
+    #
+    #    # Initialize the with the goal state, ie. the new cube is in the goal state.
+    #    cube = Cube()
+    #
+    #    # get list of goal successors
+    #    for action in self.actions:
+    #        next_cube_state = utils.perform_action(cube, action)
+    #        self.moves_away_1.append(next_cube_state)
+    #
+    #        # Creating the QValues for the first move
+    #        for temp_action in self.actions:
+    #            self.QV[(next_cube_state.__hash__(), temp_action)] = -10 if temp_action != action else 10
+    #
+    #    # get list of successors of goal successors
+    #    print('Size of move_away_1', len(self.moves_away_1))
+    #    for cube in self.moves_away_1:
+    #        for action in self.actions:
+    #            next_cube_state = utils.perform_action(cube, action)
+    #            self.moves_away_2.append(next_cube_state)
+    #
+    #            # Creating the QValues for the second move
+    #            for temp_action in self.actions:
+    #                self.QV[(next_cube_state.__hash__(), temp_action)] = -6 if temp_action != action else 6
+    #
+    #    # get list of successors-successors of goal successors
+    #    print('Size of move_away_2', len(self.moves_away_2))
+    #    for cube in self.moves_away_2:
+    #        for action in self.actions:
+    #            next_cube_state = utils.perform_action(cube, action)
+    #            self.moves_away_3.append(next_cube_state)
+    #
+    #            # Creating the QValues for the third move
+    #            for temp_action in self.actions:
+    #                self.QV[(next_cube_state.__hash__(), temp_action)] = -5 if temp_action != action else 5
+    #
+    #    # get list of successors-successors-successors of goal successors
+    #    print('Size of move_away_3', len(self.moves_away_3))
+    #    for cube in self.moves_away_3:
+    #        for action in self.actions:
+    #            next_cube_state = utils.perform_action(cube, action)
+    #            self.moves_away_4.append(next_cube_state)
+    #
+    #            # Creating the QValues for the fourth move
+    #            for temp_action in self.actions:
+    #                self.QV[(next_cube_state.__hash__(), temp_action)] = -4 if temp_action != action else 4
+    #
+    #    # get list of successors-successors-successors-successors of goal successors
+    #    print('Size of move_away_4', len(self.moves_away_4))
+    #    for cube in self.moves_away_4:
+    #        for action in self.actions:
+    #            next_cube_state = utils.perform_action(cube, action)
+    #            self.moves_away_5.append(next_cube_state)
+    #
+    #            # Creating the QValues for the fifth move
+    #            for temp_action in self.actions:
+    #                self.QV[(next_cube_state.__hash__(), temp_action)] = -3 if temp_action != action else 3
+    #
+    #    # get list of successors-successors-successors-successors-successors of goal successors
+    #
+    #    print('Size of move_away_5', len(self.moves_away_5))
+    #    for cube in self.moves_away_5:
+    #        for action in self.actions:
+    #            next_cube_state = utils.perform_action(cube, action)
+    #            self.moves_away_6.append(next_cube_state)
+    #
+    #            # Creating the QValues for the sixth move
+    #            for temp_action in self.actions:
+    #                self.QV[(next_cube_state.__hash__(), temp_action)] = -1 if temp_action != action else 1
+    #
+    #    print('Size of move_away_6', len(self.moves_away_6))
