@@ -82,7 +82,7 @@ def QLearning(agent: Agent, discount: float = 0.99, episodes: int = 10, epsilon:
         follow_policy = random.uniform(0, 1.0)
         print("Random follow_policy value generated is " + str(follow_policy))
 
-        # If the random follow_policy number is > epsilon value, we must select best move by the highest Q-Value
+        # If the random follow_policy number is > epsilon value, we must select best cube_perform_action by the highest Q-Value
         if follow_policy > epsilon:
             print("\n\nFOLLOWING  RANDOM POLICY")
 
@@ -110,7 +110,7 @@ def QLearning(agent: Agent, discount: float = 0.99, episodes: int = 10, epsilon:
             if best_QV == 0:
                 best_action = random.choice(agent.actions)
 
-                # caution if the best action, when Q-Value is 0, is also the action that was taken in the last move
+                # caution if the best action, when Q-Value is 0, is also the action that was taken in the last cube_perform_action
                 # then randomly chose another action other than the last action.
                 while best_action == agent.last_action:
                     best_action = random.choice(agent.actions)
@@ -128,7 +128,7 @@ def QLearning(agent: Agent, discount: float = 0.99, episodes: int = 10, epsilon:
             print("\n\t The new Q-Value for \"" + best_action + "\" action is : " + str(
                 agent.QV[(agent.current_state.__hash__(), best_action)]))
 
-            agent.current_state.move(best_action)
+            agent.current_state.cube_perform_action(best_action)
             agent.current_state = agent.current_state.copy()
 
             if agent.current_state.is_goal_state_reached():
@@ -142,7 +142,7 @@ def QLearning(agent: Agent, discount: float = 0.99, episodes: int = 10, epsilon:
 
         # When the generated random policy number is not greater than the Q-Value
         else:
-            # pick a random move
+            # pick a random cube_perform_action
             action = random.choice(agent.actions)
             agent.possible_moves[action] = agent.possible_moves[action] + 1
 
@@ -156,7 +156,7 @@ def QLearning(agent: Agent, discount: float = 0.99, episodes: int = 10, epsilon:
             # *********************************************************************************************************
             update_agent_QValue_table(agent, discount, visit_count)
 
-            agent.current_state.move(action)
+            agent.current_state.cube_perform_action(action)
             agent.current_state = agent.current_state.copy()
 
             agent.second_last_action = agent.last_action

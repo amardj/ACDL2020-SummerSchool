@@ -90,11 +90,11 @@ class Agent:
     # ------------------------------------------------------------------------------------------------------------------
     def max_reward_for_action(self, cube: Cube, action) -> float:
         """
-        Compute the maximum reward that the current state of the cube can get for any possible next single move.
+        Compute the maximum reward that the current state of the cube can get for any possible next single cube_perform_action.
         :param cube: The Cube.
         :param action: One of the action from the list of possible actions
         ['front', 'back', 'left', 'right', 'up', 'down']
-        :return: The maximum reward possible from the current state for the next posible move.
+        :return: The maximum reward possible from the current state for the next posible cube_perform_action.
         """
         next_cube_state = utils.perform_action(cube, action)
 
@@ -145,7 +145,7 @@ class Agent:
     # ------------------------------------------------------------------------------------------------------------------
     def register_pattern_upto_n_moves(self, move_limit: int = 5):
         """
-        This function registers patterns for the cube state such as 1 move away from goal state, 2 moves away from
+        This function registers patterns for the cube state such as 1 cube_perform_action away from goal state, 2 moves away from
         the goal state, ... , and n moves away from the goal state.
         :param move_limit:  Number of moves upto which you want to register the patterns. Default value is 5.
         :return: None
@@ -171,7 +171,7 @@ class Agent:
                     best_ith_QV = (move_limit - i + 1)**2
                     worst_ith_QV = -best_ith_QV
 
-                    # Creating the QValues for the second move
+                    # Creating the QValues for the second cube_perform_action
                     for temp_action in self.actions:
                         self.QV[(ith_cube_state.__hash__(), temp_action)] \
                             = best_ith_QV if temp_action == action else worst_ith_QV
@@ -233,7 +233,7 @@ class Agent:
             #time.sleep(1)
             print('Awoke from the sleep!')
 
-            self.current_state.move(best_action)
+            self.current_state.cube_perform_action(best_action)
             self.second_last_action = self.last_action
             self.last_action = best_action
 
@@ -249,7 +249,7 @@ class Agent:
     # ------------------------------------------------------------------------------------------------------------------
     #def register_patterns_old(self):
     #    """
-    #    This function registers patterns for the cube state such as 1 move away from goal state, 2 moves away from
+    #    This function registers patterns for the cube state such as 1 cube_perform_action away from goal state, 2 moves away from
     #    the goal state, ... , and 6 moves away from the goal state.
     #    :return: None
     #    """
@@ -264,7 +264,7 @@ class Agent:
     #        next_cube_state = utils.perform_action(cube, action)
     #        self.moves_away_1.append(next_cube_state)
     #
-    #        # Creating the QValues for the first move
+    #        # Creating the QValues for the first cube_perform_action
     #        for temp_action in self.actions:
     #            self.QV[(next_cube_state.__hash__(), temp_action)] = -10 if temp_action != action else 10
     #
@@ -275,7 +275,7 @@ class Agent:
     #            next_cube_state = utils.perform_action(cube, action)
     #            self.moves_away_2.append(next_cube_state)
     #
-    #            # Creating the QValues for the second move
+    #            # Creating the QValues for the second cube_perform_action
     #            for temp_action in self.actions:
     #                self.QV[(next_cube_state.__hash__(), temp_action)] = -6 if temp_action != action else 6
     #
@@ -286,7 +286,7 @@ class Agent:
     #            next_cube_state = utils.perform_action(cube, action)
     #            self.moves_away_3.append(next_cube_state)
     #
-    #            # Creating the QValues for the third move
+    #            # Creating the QValues for the third cube_perform_action
     #            for temp_action in self.actions:
     #                self.QV[(next_cube_state.__hash__(), temp_action)] = -5 if temp_action != action else 5
     #
@@ -297,7 +297,7 @@ class Agent:
     #            next_cube_state = utils.perform_action(cube, action)
     #            self.moves_away_4.append(next_cube_state)
     #
-    #            # Creating the QValues for the fourth move
+    #            # Creating the QValues for the fourth cube_perform_action
     #            for temp_action in self.actions:
     #                self.QV[(next_cube_state.__hash__(), temp_action)] = -4 if temp_action != action else 4
     #
@@ -308,7 +308,7 @@ class Agent:
     #            next_cube_state = utils.perform_action(cube, action)
     #            self.moves_away_5.append(next_cube_state)
     #
-    #            # Creating the QValues for the fifth move
+    #            # Creating the QValues for the fifth cube_perform_action
     #            for temp_action in self.actions:
     #                self.QV[(next_cube_state.__hash__(), temp_action)] = -3 if temp_action != action else 3
     #
@@ -320,7 +320,7 @@ class Agent:
     #            next_cube_state = utils.perform_action(cube, action)
     #            self.moves_away_6.append(next_cube_state)
     #
-    #            # Creating the QValues for the sixth move
+    #            # Creating the QValues for the sixth cube_perform_action
     #            for temp_action in self.actions:
     #                self.QV[(next_cube_state.__hash__(), temp_action)] = -1 if temp_action != action else 1
     #

@@ -11,7 +11,7 @@ from cube import Cube
 
 # ------------------------------------------------------------------------------------------------------------------
 def initial_n_move_state(n: int = 5) -> Cube:
-    """ Create initial n move state of a cube from the solved state."""
+    """ Create initial n cube_perform_action state of a cube from the solved state."""
     cube = Cube()
     return scramble(cube, n=n)
 
@@ -19,11 +19,11 @@ def initial_n_move_state(n: int = 5) -> Cube:
 # ------------------------------------------------------------------------------------------------------------------
 def initial_1_move_state() -> Cube:
     """
-    Perform initial single move
+    Perform initial single cube_perform_action
     :return:
     """
     cube = Cube()
-    cube.move(cube.actions[0])
+    cube.cube_perform_action(cube.actions[0])
     return cube
 
 
@@ -40,7 +40,7 @@ def scramble(cube: Cube, n: int = 5) -> Cube:
 
 # ------------------------------------------------------------------------------------------------------------------
 def random_move(cube: Cube) -> Cube:
-    """ Perform a single random move of 180 degree on the given cube."""
+    """ Perform a single random cube_perform_action of 180 degree on the given cube."""
 
     action = random.choice(cube.actions)
 
@@ -50,7 +50,7 @@ def random_move(cube: Cube) -> Cube:
 
 
 def perform_action(cube, action):
-    #print("in util.move() : ", cube)
+    #print("in util.cube_perform_action() : ", cube)
     new_state = cube.copy()
 
     if action == 'left':

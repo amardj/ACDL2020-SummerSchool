@@ -21,7 +21,7 @@ class Cube:
         self.actions = ['front', 'back', 'left', 'right', 'up', 'down']
 
         if c:
-            self.d = c
+            #self.d = c
             self.__front__ = c["front"]
             self.__back__ = c["back"]
             self.__left__ = c["left"]
@@ -62,8 +62,8 @@ class Cube:
 
         self.__faces__ = [self.front(), self.back(), self.left(), self.right(), self.up(), self.down()]
 
-        self.d = {"front": self.front(), "back": self.back(), "left": self.left(), \
-                  "right": self.right(), "up": self.up(), "down": self.down()}
+       # self.d = {"front": self.front(), "back": self.back(), "left": self.left(), \
+       #           "right": self.right(), "up": self.up(), "down": self.down()}
 
     # ------------------------------------------------------------------------------------------------------------------
     def __str__(self):
@@ -124,9 +124,9 @@ class Cube:
         return is_goal_state
 
     # ------------------------------------------------------------------------------------------------------------------
-    def move(self, action):
+    def cube_perform_action(self, action):
         """
-        Perform the action (move) on the cube.
+        Perform the action (cube_perform_action) on the cube.
         :param action: One of the action from the list of actions
         ['front', 'back', 'left', 'right', 'up', 'down']
         :return: self
@@ -147,7 +147,7 @@ class Cube:
         self.__faces__ = [self.front(), self.back(), self.left(), self.right(), self.up(), self.down()]
 
     # ------------------------------------------------------------------------------------------------------------------
-    # current move constraints: can only move clockwise
+    # current cube_perform_action constraints: can only cube_perform_action clockwise
     # and can only turn the cube 180 degrees,
     # turn the front face to the right, causes the first
     # row of up/down to be swapped, and the first row of

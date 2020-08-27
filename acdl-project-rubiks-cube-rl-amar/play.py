@@ -19,7 +19,7 @@ class Play:
         agent = Agent()
 
         print('\n', "Performing the registration of patter database up to n moves, please wait for a while ........ \n")
-        agent.register_pattern_upto_n_moves(7)
+        agent.register_pattern_upto_n_moves(5)
 
         print("\n Printing the QValues : ")
         #print("\n\t", agent.QV)

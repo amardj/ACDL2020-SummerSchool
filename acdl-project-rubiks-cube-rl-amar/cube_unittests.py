@@ -47,13 +47,13 @@ class TestRotations(unittest.TestCase):
         self.assertTrue(compareReverse(bot_row, up_row2))
         # check mid row inverted in place
         self.assertTrue(compareReverse(mid_row, mid_row2))
-        # check first up row move to first bot row
+        # check first up row cube_perform_action to first bot row
         self.assertTrue(compare(up_first_row, bot_first_row2))
-        # check first bot row move to first up row
+        # check first bot row cube_perform_action to first up row
         self.assertTrue(compare(bot_first_row, up_first_row2))
-        # check third col of left move to first col of right
+        # check third col of left cube_perform_action to first col of right
         self.assertTrue(compare(left_third_col, right_first_col2))
-        # check first col of right move to third col of left
+        # check first col of right cube_perform_action to third col of left
         self.assertTrue(compare(right_first_col, left_third_col2))
 
     # test 90 degree counter clockwise cube rotation works

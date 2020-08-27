@@ -22,6 +22,6 @@ def makeNearGoal():
 
     print("\nFinal state of the Cube : ", solved_cube)
 
-#print(move(cube, 'top'))
+#print(cube_perform_action(cube, 'top'))
 
 makeNearGoal()
