@@ -21,7 +21,6 @@ class Cube:
         self.actions = ['front', 'back', 'left', 'right', 'up', 'down']
 
         if c:
-            #self.d = c
             self.__front__ = c["front"]
             self.__back__ = c["back"]
             self.__left__ = c["left"]
@@ -61,9 +60,6 @@ class Cube:
         self.__down__ = [['O', 'O', 'O'], ['O', 'O', 'O'], ['O', 'O', 'O']]
 
         self.__faces__ = [self.front(), self.back(), self.left(), self.right(), self.up(), self.down()]
-
-       # self.d = {"front": self.front(), "back": self.back(), "left": self.left(), \
-       #           "right": self.right(), "up": self.up(), "down": self.down()}
 
     # ------------------------------------------------------------------------------------------------------------------
     def __str__(self):
@@ -105,10 +101,8 @@ class Cube:
     def is_goal_state_reached(self) -> bool:
         """
         Check if the agent has reached the Goal/Solved State.
-        :return:
+        :return: boolean: True when goal state is reached else False.
         """
-
-        is_goal_state = True
 
         # check if all 3 lists that make up a face are equal
         # for every face, return false if this is not the case
@@ -119,9 +113,37 @@ class Cube:
             # to the first value
             for row in face:
                 if not char == row[0] == row[1] == row[2]:
-                    is_goal_state = False
+                    return False
 
-        return is_goal_state
+        #for face in self.__faces__:
+        #    print('\t Face is : ', face)
+        #print('\n Cube has reached its GOAL State!!!', self.__str__(), '\n')
+        #print('\n Copied Cube has reached its GOAL State!!!', self.copy(), '\n')
+        #print('\t Number of solved faces : ', self.num_of_solved_faces(), '\n')
+
+        return True
+
+    # ------------------------------------------------------------------------------------------------------------------
+    def num_of_solved_faces(self) -> int:
+        """
+        Computes the number of solved faces of a given cube.
+        :param cube: The Cube.
+        :return: Number of solved faces.
+        """
+        # Initialized the number of solved faces to be zero.
+        solved_faces_count = 0
+
+        # If all the facelets are of same colour to the first facelet
+        # then that face is considered as solved face.
+        for face in self.__faces__:
+            color = face[0][0]
+
+            # #if number of pieces on this side equal to first square
+            # #is number of total pieces, side is solved
+            if sum(row.count(color) for row in face) == self.size ** 2:
+                solved_faces_count += 1
+
+        return solved_faces_count
 
     # ------------------------------------------------------------------------------------------------------------------
     def cube_perform_action(self, action):

@@ -35,7 +35,8 @@ class Play:
         print("\n*** there are " + str(len(agent.QV)) + " keys in Q Table", '\n')
 
         print(
-            "\n The Play Begins : **********************************************************************************\n")
+            "\n\n\n The Play Begins : "
+            "**********************************************************************************\n\n")
         agent.start()
 
         agent.display()

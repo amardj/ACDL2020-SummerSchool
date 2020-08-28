@@ -12,6 +12,7 @@ from cube import Cube
 # ------------------------------------------------------------------------------------------------------------------
 def initial_n_move_state(n: int = 5) -> Cube:
     """ Create initial n cube_perform_action state of a cube from the solved state."""
+    print('\nThe new cube will be scrambled by : ', n, ' moves.\n\n')
     cube = Cube()
     return scramble(cube, n=n)
 

@@ -31,13 +31,13 @@ def QLearning(agent: Agent, discount: float = 0.99, episodes: int = 10, epsilon:
     """
 
     # The current state of the
-    print(agent.current_state)  # six_move_state()
+    # print(agent.current_state)  # six_move_state()
 
     for i in range(episodes):
 
-        print("\n====== EPISODE " + str(i) + " ======")
-        print("==== CURRENT STATE ========")
-        print("========================\n")
+        print("\n\n========= EPISODE " + str(i) + " =========")
+        print("====== CURRENT STATE =======")
+        print("=============================\n")
 
         # initialize values in Q-State dictionary for
         # any state action pairs including current state
@@ -71,10 +71,13 @@ def QLearning(agent: Agent, discount: float = 0.99, episodes: int = 10, epsilon:
             # After initializing the Q-Value as 0, check if there are saved rewards if not then compute the rewards for
             # the current action and append it to the agents rewards.
             if not saved_rewards:
-                agent.rewards[agent.current_state.__hash__()].append(agent.reward_for_action(agent.current_state, action))
+                agent.rewards[agent.current_state.__hash__()]\
+                    .append(agent.reward_for_action(agent.current_state, action))
 
         # Check if agent has already reached the goal state!
         if 100 in agent.rewards[agent.current_state.__hash__()]:
+            print('Last action for goal state : ', agent.last_action, agent.current_state)
+            agent.current_state.is_goal_state_reached()
             print("REACHED GOAL, END Q-LEARN ITERATION")
             return
 
@@ -82,7 +85,8 @@ def QLearning(agent: Agent, discount: float = 0.99, episodes: int = 10, epsilon:
         follow_policy = random.uniform(0, 1.0)
         print("Random follow_policy value generated is " + str(follow_policy))
 
-        # If the random follow_policy number is > epsilon value, we must select best cube_perform_action by the highest Q-Value
+        # If the random follow_policy number is > epsilon value, we must select best cube_perform_action by
+        # the highest Q-Value.
         if follow_policy > epsilon:
             print("\n\nFOLLOWING  RANDOM POLICY")
 
@@ -110,8 +114,8 @@ def QLearning(agent: Agent, discount: float = 0.99, episodes: int = 10, epsilon:
             if best_QV == 0:
                 best_action = random.choice(agent.actions)
 
-                # caution if the best action, when Q-Value is 0, is also the action that was taken in the last cube_perform_action
-                # then randomly chose another action other than the last action.
+                # caution if the best action, when Q-Value is 0, is also the action that was taken in the last
+                # cube_perform_action then randomly chose another action other than the last action.
                 while best_action == agent.last_action:
                     best_action = random.choice(agent.actions)
 
@@ -142,7 +146,7 @@ def QLearning(agent: Agent, discount: float = 0.99, episodes: int = 10, epsilon:
 
         # When the generated random policy number is not greater than the Q-Value
         else:
-            # pick a random cube_perform_action
+            # pick a random action
             action = random.choice(agent.actions)
             agent.possible_moves[action] = agent.possible_moves[action] + 1
 
