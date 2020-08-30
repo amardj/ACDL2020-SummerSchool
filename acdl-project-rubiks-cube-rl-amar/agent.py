@@ -171,7 +171,7 @@ class Agent:
                         self.QV[(ith_cube_state.__hash__(), temp_action)] \
                             = best_ith_QV if temp_action == action else worst_ith_QV
 
-        print('\n moves_away_list_size[', i - 1, '] : ', len(self.moves_away_from_goal[i]))
+        print('\n\t moves_away_list_size[', i, '] : ', len(self.moves_away_from_goal[i]))
 
         return None
 

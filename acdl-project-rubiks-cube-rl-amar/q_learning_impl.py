@@ -16,7 +16,7 @@ import random
 
 from agent import Agent
 
-__ALPHA = .4  # .6
+__ALPHA = 0.6 #.4  # .6
 
 
 # explore
